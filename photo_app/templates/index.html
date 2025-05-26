@@ -1,0 +1,131 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <h1>Photo Gallery</h1>
+
+  <!-- Upload Form -->
+  <div class="mb-4">
+    <button
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#uploadModal"
+    >
+      Upload Photo
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-4 d-flex">
+    <input
+      type="text"
+      id="searchTag"
+      class="form-control me-2"
+      placeholder="Search by tag..."
+    />
+    <button class="btn btn-primary" id="searchBtn" type="button">Search</button>
+  </div>
+
+  <!-- Gallery Display -->
+  <div class="row" id="photoGallery">
+    <!-- Photos dynamically added here -->
+  </div>
+
+  <!-- Photo Gallery -->
+  <div class="row" id="photoGallery">
+    {% for photo in photos %}
+    <div class="col-md-4 mb-4" data-photo-id="{{ photo.id }}">
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='uploads/' + photo.image_path) }}"
+          class="card-img-top"
+          alt="{{ photo.title }}"
+        />
+
+        <div class="card-body">
+          <h5 class="card-title">{{ photo.title }}</h5>
+          <p class="card-text">{{ photo.description }}</p>
+          <div class="tags">
+            {% for tag in photo.tags %}
+            <span class="badge bg-secondary">{{ tag.name }}</span>
+            {% endfor %}
+          </div>
+          <button class="btn btn-sm btn-primary edit-photo">Edit</button>
+          <button class="btn btn-sm btn-danger delete-photo">Delete</button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Upload Photo</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="uploadForm">
+          {{ form.csrf_token }}
+          <div class="mb-3">
+            {{ form.title.label(class="form-label") }} {{
+            form.title(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.description.label(class="form-label") }} {{
+            form.description(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.image.label(class="form-label") }} {{
+            form.image(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.tags.label(class="form-label") }} {{
+            form.tags(class="form-control") }}
+          </div>
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editForm">
+        <input type="hidden" id="editPhotoId" name="editPhotoId">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Edit Photo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="editTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="editTitle" name="editTitle" required>
+          </div>
+          <div class="mb-3">
+            <label for="editDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="editDescription" name="editDescription"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editTags" class="form-label">Tags (comma separated)</label>
+            <input type="text" class="form-control" id="editTags" name="editTags">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
